@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบรวบรวมและวิเคราะห์ราคาที่อยู่อาศัย</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="main-header glass-card">
+            <div class="header-content">
+                <div class="title-section">
+                    <h1>ระบบรวบรวมและวิเคราะห์ราคาที่อยู่อาศัย</h1>
+                    <p class="subtitle">Real Estate Aggregator & Predictor</p>
+                </div>
+                <div class="group-badge">
+                    <span class="icon">🎃</span>
+                    <span>Pumpkin Grill</span>
+                </div>
+            </div>
+            <div class="animated-gradient-bar"></div>
+        </header>
+
+        <!-- Stats Row -->
+        <section class="stats-grid">
+            <div class="stat-card glass-card">
+                <div class="stat-icon purple-icon">📊</div>
+                <div class="stat-content">
+                    <h3>จำนวนประกาศทั้งหมด</h3>
+                    <div class="stat-value" id="stat-total">0</div>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon emerald-icon">💰</div>
+                <div class="stat-content">
+                    <h3>ราคาเฉลี่ย</h3>
+                    <div class="stat-value" id="stat-avg-price">฿0.00 ล้าน</div>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon blue-icon">📏</div>
+                <div class="stat-content">
+                    <h3>ราคาต่อ ตร.ม. เฉลี่ย</h3>
+                    <div class="stat-value" id="stat-avg-sqm">฿0 / ตร.ม.</div>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon amber-icon">🎯</div>
+                <div class="stat-content">
+                    <h3>ค่ามัธยฐาน</h3>
+                    <div class="stat-value" id="stat-median">฿0.00 ล้าน</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Grid -->
+        <section class="charts-section">
+            <h2 class="section-title">วิเคราะห์ข้อมูล (Data Analysis)</h2>
+            <div class="charts-grid">
+                <div class="chart-card glass-card">
+                    <h3>ราคาเฉลี่ยตามทำเล</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-price-by-zone"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card glass-card">
+                    <h3>สัดส่วนประเภทอสังหาฯ</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-type-breakdown"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card glass-card">
+                    <h3>พื้นที่ vs ราคา</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-price-vs-area"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card glass-card">
+                    <h3>การกระจายราคา</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-price-distribution"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card glass-card">
+                    <h3>แนวโน้มราคา</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-price-trend"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card glass-card">
+                    <h3>Feature Importance จาก ML Model</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-feature-importance"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prediction and Pipeline Row -->
+        <section class="mixed-row">
+            <!-- Price Predictor -->
+            <div class="predictor-section glass-card">
+                <h2 class="section-title">ทำนายราคา (Price Predictor)</h2>
+                <form id="predict-form" class="modern-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>ประเภทอสังหาฯ</label>
+                            <select name="property_type" required>
+                                <option value="คอนโด">คอนโด</option>
+                                <option value="บ้านเดี่ยว">บ้านเดี่ยว</option>
+                                <option value="ทาวน์โฮม">ทาวน์โฮม</option>
+                                <option value="ที่ดิน">ที่ดิน</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>โซน</label>
+                            <select name="zone" required>
+                                <option value="CBD">CBD</option>
+                                <option value="Inner City">Inner City</option>
+                                <option value="Suburban">Suburban</option>
+                                <option value="Outer">Outer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>พื้นที่ (ตร.ม.) <span id="area-val">50</span></label>
+                            <input type="range" name="area_sqm" min="10" max="500" value="50" oninput="document.getElementById('area-val').innerText = this.value" required>
+                        </div>
+                        <div class="form-group">
+                            <label>ห้องนอน</label>
+                            <input type="number" name="bedrooms" min="0" max="10" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>ห้องน้ำ</label>
+                            <input type="number" name="bathrooms" min="0" max="10" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>ชั้น</label>
+                            <input type="number" name="floor" min="1" max="100" value="1">
+                        </div>
+                    </div>
+                    <div class="form-group toggle-group">
+                        <label>ใกล้ BTS/MRT</label>
+                        <label class="switch">
+                            <input type="checkbox" name="has_bts">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <button type="submit" class="glow-button" id="predict-btn">
+                        <span>ทำนายราคา</span>
+                        <div class="spinner hidden" id="predict-spinner"></div>
+                    </button>
+                </form>
+                <div class="prediction-result hidden" id="prediction-result">
+                    <h4>ราคาประเมิน</h4>
+                    <div class="predicted-value" id="predicted-price">฿0.00 ล้าน</div>
+                    <p class="model-info" id="model-info">Model info here</p>
+                </div>
+            </div>
+
+            <!-- Pipeline Report -->
+            <div class="pipeline-section glass-card">
+                <h2 class="section-title">รายงานการทำความสะอาดข้อมูล</h2>
+                <div id="pipeline-content" class="pipeline-content">
+                    <!-- Dynamic content injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table -->
+        <section class="table-section glass-card">
+            <div class="table-header">
+                <h2 class="section-title">ข้อมูลประกาศ (Listings)</h2>
+                <div class="table-filters">
+                    <select id="filter-type">
+                        <option value="all">ทุกประเภท</option>
+                        <option value="คอนโด">คอนโด</option>
+                        <option value="บ้านเดี่ยว">บ้านเดี่ยว</option>
+                        <option value="ทาวน์โฮม">ทาวน์โฮม</option>
+                        <option value="ที่ดิน">ที่ดิน</option>
+                    </select>
+                    <select id="filter-zone">
+                        <option value="all">ทุกโซน</option>
+                        <option value="CBD">CBD</option>
+                        <option value="Inner City">Inner City</option>
+                        <option value="Suburban">Suburban</option>
+                        <option value="Outer">Outer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="listings-table" class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>หัวข้อ</th>
+                            <th>ประเภท</th>
+                            <th>ทำเล</th>
+                            <th>โซน</th>
+                            <th>ราคา</th>
+                            <th>พื้นที่ (ตร.ม.)</th>
+                            <th>ราคา/ตร.ม.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listings-tbody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="pagination">
+                <!-- Pagination injected via JS -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <p>โครงงานวิชา 204426 — กลุ่ม Pumpkin Grill</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

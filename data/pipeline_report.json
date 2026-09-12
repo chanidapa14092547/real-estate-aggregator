@@ -1,0 +1,36 @@
+{
+    "generation_time": 0.4274728298187256,
+    "cleaning": {
+        "before": 50350,
+        "after": 43028,
+        "operations": {
+            "deduplication": 2021,
+            "missing_values": 1322,
+            "spam_outliers": 3979
+        }
+    },
+    "cleaning_time": 0.3822009563446045,
+    "transformation": {
+        "final_record_count": 42525
+    },
+    "transformation_time": 0.9221980571746826,
+    "modeling": {
+        "Linear Regression": {
+            "MAE": 24329801.471409384,
+            "RMSE": 41363221.66181079,
+            "R2": 0.5177449265838124
+        },
+        "Random Forest": {
+            "MAE": 15346599.997973744,
+            "RMSE": 35141130.29953522,
+            "R2": 0.6519196210671321
+        },
+        "Gradient Boosting": {
+            "MAE": 15827279.481592806,
+            "RMSE": 32797575.842230715,
+            "R2": 0.6967983359134218
+        }
+    },
+    "modeling_time": 9.365180969238281,
+    "total_time": 11.097060918807983
+}
