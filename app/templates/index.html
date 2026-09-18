@@ -7,11 +7,11 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=overview-3">
 </head>
 <body>
     <div class="dashboard-container">
@@ -23,7 +23,7 @@
                     <p class="subtitle">Real Estate Aggregator & Predictor</p>
                 </div>
                 <div class="group-badge">
-                    <span class="icon">🎃</span>
+                    <span class="icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6V4c0-1.1.9-2 2-2"/><path d="M12 7C8 3 3 6 3 12c0 5 3 9 6 8 2 1 4 1 6 0 3 1 6-3 6-8 0-6-5-9-9-5Z"/><ellipse cx="12" cy="13" rx="4" ry="8"/></svg></span>
                     <span>Pumpkin Grill</span>
                 </div>
             </div>
@@ -33,30 +33,30 @@
         <!-- Stats Row -->
         <section class="stats-grid">
             <div class="stat-card glass-card">
-                <div class="stat-icon purple-icon">📊</div>
+                <div class="stat-icon purple-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01"/></svg></div>
                 <div class="stat-content">
-                    <h3>จำนวนประกาศทั้งหมด</h3>
+                    <h3>Total Listings</h3>
                     <div class="stat-value" id="stat-total">0</div>
                 </div>
             </div>
             <div class="stat-card glass-card">
-                <div class="stat-icon emerald-icon">💰</div>
+                <div class="stat-icon emerald-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="3" width="4" height="18" rx="1"/><rect x="17" y="8" width="4" height="13" rx="1"/></svg></div>
                 <div class="stat-content">
-                    <h3>ราคาเฉลี่ย</h3>
+                    <h3>Average Price</h3>
                     <div class="stat-value" id="stat-avg-price">฿0.00 ล้าน</div>
                 </div>
             </div>
             <div class="stat-card glass-card">
-                <div class="stat-icon blue-icon">📏</div>
+                <div class="stat-icon blue-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3v18h18M6 15l5-6 4 3 6-7"/></svg></div>
                 <div class="stat-content">
-                    <h3>ราคาต่อ ตร.ม. เฉลี่ย</h3>
+                    <h3>Price per sqm</h3>
                     <div class="stat-value" id="stat-avg-sqm">฿0 / ตร.ม.</div>
                 </div>
             </div>
             <div class="stat-card glass-card">
-                <div class="stat-icon amber-icon">🎯</div>
+                <div class="stat-icon amber-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3v18h18M6 17l4-8 4 5 5-9"/></svg></div>
                 <div class="stat-content">
-                    <h3>ค่ามัธยฐาน</h3>
+                    <h3>Median Price</h3>
                     <div class="stat-value" id="stat-median">฿0.00 ล้าน</div>
                 </div>
             </div>
@@ -64,40 +64,40 @@
 
         <!-- Charts Grid -->
         <section class="charts-section">
-            <h2 class="section-title">วิเคราะห์ข้อมูล (Data Analysis)</h2>
+            <h2 class="sr-only">วิเคราะห์ข้อมูล (Data Analysis)</h2>
             <div class="charts-grid">
                 <div class="chart-card glass-card">
-                    <h3>ราคาเฉลี่ยตามทำเล</h3>
+                    <div class="chart-header"><h3>Average Price by Zone</h3><div class="chart-tools"><span class="chart-tag">By zone</span><button type="button" class="chart-download" aria-label="Download Average Price by Zone" title="Download chart">↓</button></div></div>
                     <div class="chart-container">
                         <canvas id="chart-price-by-zone"></canvas>
                     </div>
                 </div>
                 <div class="chart-card glass-card">
-                    <h3>สัดส่วนประเภทอสังหาฯ</h3>
+                    <div class="chart-header"><h3>Property Type</h3><div class="chart-tools"><span class="chart-tag">All listings</span><button type="button" class="chart-download" aria-label="Download Property Type" title="Download chart">↓</button></div></div>
                     <div class="chart-container">
                         <canvas id="chart-type-breakdown"></canvas>
                     </div>
                 </div>
                 <div class="chart-card glass-card">
-                    <h3>พื้นที่ vs ราคา</h3>
+                    <div class="chart-header"><h3>Property Area Size</h3><div class="chart-tools"><span class="chart-tag">Area vs price</span><button type="button" class="chart-download" aria-label="Download Property Area Size" title="Download chart">↓</button></div></div>
                     <div class="chart-container">
                         <canvas id="chart-price-vs-area"></canvas>
                     </div>
                 </div>
                 <div class="chart-card glass-card">
-                    <h3>การกระจายราคา</h3>
+                    <div class="chart-header"><h3>Listed Histogram</h3><div class="chart-tools"><span class="chart-tag">Price distribution</span><button type="button" class="chart-download" aria-label="Download Listed Histogram" title="Download chart">↓</button></div></div>
                     <div class="chart-container">
                         <canvas id="chart-price-distribution"></canvas>
                     </div>
                 </div>
                 <div class="chart-card glass-card">
-                    <h3>แนวโน้มราคา</h3>
+                    <div class="chart-header"><h3>Average Listing Price</h3><div class="chart-tools"><span class="chart-tag">Monthly</span><button type="button" class="chart-download" aria-label="Download Average Listing Price" title="Download chart">↓</button></div></div>
                     <div class="chart-container">
                         <canvas id="chart-price-trend"></canvas>
                     </div>
                 </div>
                 <div class="chart-card glass-card">
-                    <h3>Feature Importance จาก ML Model</h3>
+                    <div class="chart-header"><h3>Feature Importance</h3><div class="chart-tools"><span class="chart-tag">ML model</span><button type="button" class="chart-download" aria-label="Download Feature Importance" title="Download chart">↓</button></div></div>
                     <div class="chart-container">
                         <canvas id="chart-feature-importance"></canvas>
                     </div>
@@ -225,6 +225,6 @@
         </footer>
     </div>
 
-    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/dashboard.js?v=overview-2"></script>
 </body>
 </html>

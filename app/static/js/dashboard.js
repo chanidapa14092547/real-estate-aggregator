@@ -36,7 +36,7 @@ const animateValue = (element, start, end, duration, formatter) => {
         const current = Math.floor(eased * (end - start) + start);
         
         if (progress < 1) {
-            element.textContent = formatNumber(current);
+            element.textContent = formatter(current);
             window.requestAnimationFrame(step);
         } else {
             element.textContent = formatter(end);
@@ -46,16 +46,16 @@ const animateValue = (element, start, end, duration, formatter) => {
 };
 
 // === Chart.js Global Config ===
-Chart.defaults.color = '#94a3b8';
+Chart.defaults.color = '#c3c6d2';
 Chart.defaults.font.family = 'Inter, sans-serif';
-Chart.defaults.font.size = 12;
+Chart.defaults.font.size = 10;
 Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(15, 15, 35, 0.95)';
 Chart.defaults.plugins.tooltip.borderColor = 'rgba(99, 102, 241, 0.3)';
 Chart.defaults.plugins.tooltip.borderWidth = 1;
 Chart.defaults.plugins.tooltip.cornerRadius = 8;
 Chart.defaults.plugins.tooltip.padding = 12;
 
-const gridColor = 'rgba(255, 255, 255, 0.06)';
+const gridColor = 'rgba(205, 214, 238, 0.13)';
 const chartColors = {
     indigo: 'rgba(99, 102, 241, 0.8)',
     violet: 'rgba(139, 92, 246, 0.8)',
@@ -71,6 +71,17 @@ const perPage = 15;
 
 // === Init ===
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.chart-download').forEach(button => {
+        button.addEventListener('click', () => {
+            const canvas = button.closest('.chart-card').querySelector('canvas');
+            const chart = Chart.getChart(canvas);
+            if (!chart) return;
+            const link = document.createElement('a');
+            link.download = `${canvas.id}.png`;
+            link.href = chart.toBase64Image();
+            link.click();
+        });
+    });
     fetchStats();
     fetchCharts();
     fetchListings();
@@ -129,8 +140,8 @@ async function fetchCharts() {
                 datasets: [{
                     label: 'ราคาเฉลี่ย (บาท)',
                     data: data.data,
-                    backgroundColor: gradient,
-                    borderRadius: 8,
+                    backgroundColor: ['#5148bd', '#4266b0', '#28b98a', '#47af83'],
+                    borderRadius: 0,
                     borderSkipped: false,
                 }]
             },
@@ -161,7 +172,7 @@ async function fetchCharts() {
                 labels: data.labels,
                 datasets: [{
                     data: data.data,
-                    backgroundColor: [chartColors.indigo, chartColors.violet, chartColors.emerald, chartColors.amber],
+                    backgroundColor: ['#5145ba', '#25aa94', '#4bc689', '#e7b456'],
                     borderWidth: 0,
                     hoverOffset: 8,
                 }]
@@ -169,9 +180,9 @@ async function fetchCharts() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '68%',
+                cutout: '58%',
                 plugins: {
-                    legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } },
+                    legend: { position: 'right', labels: { boxWidth: 8, boxHeight: 8, padding: 12, usePointStyle: true, pointStyle: 'circle' } },
                     tooltip: {
                         callbacks: {
                             label: (ctx) => `${ctx.label}: ${formatNumber(ctx.raw)} ประกาศ (${((ctx.raw / ctx.dataset.data.reduce((a,b)=>a+b,0)) * 100).toFixed(1)}%)`
@@ -187,7 +198,7 @@ async function fetchCharts() {
         const scatterColors = [chartColors.indigo, chartColors.emerald, chartColors.amber, chartColors.rose];
         data.datasets.forEach((ds, i) => {
             ds.backgroundColor = scatterColors[i % scatterColors.length];
-            ds.pointRadius = 3.5;
+            ds.pointRadius = 2.5;
             ds.pointHoverRadius = 6;
         });
         new Chart(document.getElementById('chart-price-vs-area'), {
@@ -197,7 +208,7 @@ async function fetchCharts() {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true } },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.x.toFixed(0)} ตร.ม. / ${formatThaiPrice(ctx.raw.y)}`
@@ -226,8 +237,10 @@ async function fetchCharts() {
                 datasets: [{
                     label: 'จำนวนประกาศ',
                     data: data.data,
-                    backgroundColor: gradient,
-                    borderRadius: 4,
+                    backgroundColor: data.data.map((_, i) => i < 3 ? '#5148bd' : i < 6 ? '#428eac' : i < 10 ? '#3bb487' : '#d6aa4b'),
+                    barPercentage: 1,
+                    categoryPercentage: .95,
+                    borderRadius: 0,
                     borderSkipped: false,
                 }]
             },
@@ -237,7 +250,7 @@ async function fetchCharts() {
                 plugins: { legend: { display: false } },
                 scales: {
                     y: { grid: { color: gridColor } },
-                    x: { grid: { display: false }, ticks: { maxRotation: 45, font: { size: 10 } } }
+                    x: { grid: { display: false }, ticks: { maxRotation: 0, maxTicksLimit: 6, font: { size: 9 } } }
                 }
             }
         });
@@ -258,8 +271,8 @@ async function fetchCharts() {
                     label: 'ราคาเฉลี่ย',
                     data: data.data,
                     borderColor: chartColors.emerald,
-                    borderWidth: 2.5,
-                    tension: 0.4,
+                    borderWidth: 1.5,
+                    tension: 0.15,
                     fill: true,
                     backgroundColor: gradient,
                     pointBackgroundColor: chartColors.emerald,
@@ -276,7 +289,7 @@ async function fetchCharts() {
                 },
                 scales: {
                     y: { grid: { color: gridColor }, ticks: { callback: v => formatCompact(v) } },
-                    x: { grid: { color: gridColor }, ticks: { maxRotation: 45, font: { size: 10 } } }
+                    x: { grid: { color: gridColor }, ticks: { maxRotation: 0, maxTicksLimit: 6, font: { size: 9 } } }
                 }
             }
         });
@@ -284,15 +297,16 @@ async function fetchCharts() {
 
     // 6. Feature Importance (Horizontal Bar)
     fetch('/api/charts/feature-importance').then(r => r.json()).then(data => {
+        data.labels = data.labels.slice(0, 8);
         new Chart(document.getElementById('chart-feature-importance'), {
             type: 'bar',
             data: {
                 labels: data.labels,
                 datasets: [{
                     label: 'ความสำคัญ',
-                    data: data.data,
-                    backgroundColor: chartColors.amber,
-                    borderRadius: 6,
+                    data: data.data.slice(0, 8),
+                    backgroundColor: (context) => { const g = context.chart.ctx.createLinearGradient(0, 0, context.chart.width, 0); g.addColorStop(0, '#5145ba'); g.addColorStop(1, context.dataIndex < 6 ? '#2fbb88' : '#e0ac43'); return g; },
+                    borderRadius: 0,
                     borderSkipped: false,
                 }]
             },
